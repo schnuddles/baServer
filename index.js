@@ -3,24 +3,29 @@ const app = express();
 const socket = require('socket.io');
 
 const server = app.listen(3000);
-
 const io = socket(server);
-io.sockets.on('connection', newConnection);
 
-function newConnection(socket) {
+// Die Funktion, die den Code für die Verarbeitung der eingehenden Nachrichten enthält
+function handleIncomingMessages(socket, headline, copy) {
   console.log('New connection: ' + socket.id);
-  // hier können Sie den Code für die Verarbeitung der eingehenden Nachrichten schreiben
-  socket.emit('headline', 'Überschrift');
-  socket.emit('copy', 'Copytext');
+  socket.emit('headline', headline);
+  socket.emit('copy', copy);
 }
 
-const quarterCircle = express.static('sketch');
+// Socket-Verbindung herstellen
+io.sockets.on('connection', (socket) => {
+  handleIncomingMessages(socket);
+});
 
-app.get('/sketch', (req, res)=>{
-    app.use(quarterCircle);
-})
+// Route für den Endpunkt '/sketch'
+app.get('/sketch', (req, res) => {
+    let copyMsg = 'Das ist ein Copytext';
+    let headlineMsg = 'Das ist eine Headline';
+    io.on('connection', (socket)=> {
+        handleIncomingMessages(socket, headlineMsg, copyMsg); // die Funktion wird auch hier aufgerufen
+    });
+    res.sendFile(__dirname + '/sketch/index.html');
+});
 
-app.use(quarterCircle);
-
-
-
+// Statisches Verzeichnis 'sketch' bereitstellen
+app.use(express.static('sketch'));
