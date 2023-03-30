@@ -11,28 +11,31 @@ let copyMessage = "";
 
 
 
+
 function preload() {
   headline = loadFont("./font/BarlowSemiCondensed-Bold.ttf");
   copyText = loadFont("./font/BarlowSemiCondensed-Regular.ttf");
+  socket = io.connect('http://localhost:3000');
+  socket.on('headline', function(data) {
+    headlineMessage = data;
+  })
+  
+  socket.on('copy', function(data){
+    copyMessage = data;
+  })
 }
 
 function setup() {
   rwLila = color(102, 56, 182);
   rwLilaDark = color(45, 7, 100);
   rwCyan = color(0, 255, 255);
-  socket = io.connect('http://localhost:3000');
+
   
 
   createCanvas(900, 900);
   background(rwLila);
 
-  socket.on('headline', function(data) {
-    headlineMessage = data;
-  })
 
-  socket.on('copy', function(data){
-    copyMessage = data;
-  })
 
   grid = width / rwUnit;
   amount = grid * 3;
@@ -58,7 +61,8 @@ function setup() {
       pop();
     }
   }
-
+ /*  writeHeadline();
+  writeCopyText(); */
 
 
   //save('/public/image.png');
