@@ -19,8 +19,9 @@ io.sockets.on('connection', (socket) => {
 
 // Route für den Endpunkt '/sketch'
 app.get('/sketch', (req, res) => {
-    let copyMsg = 'Das ist ein Copytext';
-    let headlineMsg = 'Das ist eine Headline';
+   
+   let headlineMsg = req.query.headline;
+   let copyMsg = req.query.copy;
     io.on('connection', (socket)=> {
         handleIncomingMessages(socket, headlineMsg, copyMsg); // die Funktion wird auch hier aufgerufen
     });
